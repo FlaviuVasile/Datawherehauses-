@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Financial Assets Platform Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #07111f;
+        color: #e5e7eb;
+        overflow-x: hidden;
+    }
+
+    .page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+
+    .hero {
+        background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
+        border: 1px solid #334155;
+        border-radius: 22px;
+        padding: 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero h1 {
+        margin: 0;
+        font-size: 34px;
+        letter-spacing: 2px;
+        color: #67e8f9;
+    }
+
+    .hero p {
+        margin: 10px 0 0;
+        color: #cbd5e1;
+        font-size: 15px;
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .sidebar,
+    .panel,
+    .card {
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-radius: 18px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
+    }
+
+    .sidebar {
+        padding: 18px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .section-title {
+        margin: 0 0 14px;
+        font-size: 17px;
+        color: #67e8f9;
+    }
+
+    .field {
+        margin-bottom: 12px;
+    }
+
+    .field label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+        color: #cbd5e1;
+    }
+
+    .field input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #334155;
+        background: #020617;
+        color: #e5e7eb;
+        outline: none;
+    }
+
+    .field input:focus {
+        border-color: #38bdf8;
+    }
+
+    .button-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    button {
+        border: none;
+        border-radius: 10px;
+        padding: 11px 12px;
+        cursor: pointer;
+        font-weight: bold;
+        color: white;
+        background: #2563eb;
+        text-align: left;
+        transition: 0.15s;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        background: #1d4ed8;
+    }
+
+    button.green {
+        background: #15803d;
+    }
+
+    button.green:hover {
+        background: #166534;
+    }
+
+    button.purple {
+        background: #7c3aed;
+    }
+
+    button.purple:hover {
+        background: #6d28d9;
+    }
+
+    button.gray {
+        background: #334155;
+    }
+
+    button.gray:hover {
+        background: #475569;
+    }
+
+    button.red {
+        background: #b91c1c;
+    }
+
+    button.red:hover {
+        background: #991b1b;
+    }
+
+    button.orange {
+        background: #c2410c;
+    }
+
+    button.orange:hover {
+        background: #9a3412;
+    }
+
+    .main {
+        min-width: 0;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(150px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .card h3 {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .card p {
+        margin: 10px 0 0;
+        font-size: 28px;
+        font-weight: bold;
+        color: #67e8f9;
+        word-break: break-word;
+    }
+
+    .panel {
+        padding: 18px;
+        margin-bottom: 18px;
+        min-width: 0;
+    }
+
+    .panel h2 {
+        margin: 0 0 12px;
+        font-size: 20px;
+        color: #e5e7eb;
+    }
+
+    .status {
+        padding: 14px;
+        border-radius: 12px;
+        background: #020617;
+        border: 1px solid #334155;
+        color: #cbd5e1;
+        white-space: pre-wrap;
+        margin-bottom: 18px;
+    }
+
+    .status.ok {
+        border-color: #22c55e;
+        color: #bbf7d0;
+    }
+
+    .status.error {
+        border-color: #ef4444;
+        color: #fecaca;
+    }
+
+    .grid-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    pre {
+        margin: 0;
+        padding: 14px;
+        background: #020617;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        color: #d1d5db;
+        overflow-x: auto;
+        max-height: 430px;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #1e293b;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+        background: #020617;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #1e293b;
+        text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+    }
+
+    th {
+        color: #67e8f9;
+        background: #111827;
+        position: sticky;
+        top: 0;
+    }
+
+    td {
+        color: #e5e7eb;
+        max-width: 240px;
+        word-break: break-word;
+    }
+
+    canvas {
+        width: 100% !important;
+        max-height: 380px;
+        background: #020617;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        padding: 10px;
+    }
+
+    .notes {
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .badge-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .badge {
+        padding: 6px 9px;
+        background: #020617;
+        border: 1px solid #334155;
+        border-radius: 999px;
+        font-size: 12px;
+        color: #cbd5e1;
+    }
+
+    @media (max-width: 1100px) {
+        .layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+
+        .cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-two {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .page {
+            padding: 12px;
+        }
+
+        .hero h1 {
+            font-size: 24px;
+        }
+
+        .cards {
+            grid-template-columns: 1fr;
+        }
+    }
+  </style>
+</head>
+
+<body>
+<div class="page">
+  <header class="hero">
+    <h1>Financial Assets Platform</h1>
+    <p>
+      Demo pentru ingestie date financiare, MongoDB temporal warehouse, REST API,
+      analytics, forecast, assistant tools și agent workflow.
+    </p>
+    <div class="badge-row">
+      <span class="badge">Spring Boot</span>
+      <span class="badge">MongoDB</span>
+      <span class="badge">REST API</span>
+      <span class="badge">Alpha Vantage</span>
+      <span class="badge">Analytics</span>
+      <span class="badge">Assistant Tools</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2 class="section-title">Demo Controls</h2>
+
+      <div class="field">
+        <label>Symbol</label>
+        <input id="symbolInput" value="IBM">
+      </div>
+
+      <div class="field">
+        <label>Asset ID</label>
+        <input id="assetIdInput" value="IBM">
+      </div>
+
+      <div class="field">
+        <label>Provider ID</label>
+        <input id="providerIdInput" value="ALPHA_VANTAGE">
+      </div>
+
+      <div class="field">
+        <label>Start Date</label>
+        <input id="startDateInput" value="2026-01-01">
+      </div>
+
+      <div class="field">
+        <label>End Date</label>
+        <input id="endDateInput" value="2026-01-31">
+      </div>
+
+      <div class="field">
+        <label>As Of DateTime</label>
+        <input id="asOfInput" value="2026-05-06T12:40:00">
+      </div>
+
+      <div class="button-grid">
+        <button class="green" onclick="ingestAlpha()">1. Ingest Alpha Vantage</button>
+        <button class="orange" onclick="ingestStooq()">Try Stooq Ingest</button>
+
+        <button onclick="loadAssets()">2. Q1 List Assets</button>
+        <button onclick="loadAssetDetails()">3. Q2 Asset Details</button>
+        <button onclick="loadProviders()">4. Q3 List Providers</button>
+        <button onclick="loadProviderDetails()">5. Q4 Provider Details</button>
+        <button onclick="loadTimeSeries()">6. Q5 Time Series + Chart</button>
+        <button onclick="loadTimeSeriesAsOf()">7. Q5 Time Series As Of</button>
+
+        <button class="purple" onclick="loadSummary()">8. Analytics Summary</button>
+        <button class="purple" onclick="loadForecast()">9. Forecast Next Day</button>
+        <button class="purple" onclick="loadExport()">10. Export for ML/Spark</button>
+
+        <button class="gray" onclick="loadAssistantTools()">11. Assistant Tools</button>
+        <button class="gray" onclick="assistantListAssets()">Assistant: List Assets</button>
+        <button class="gray" onclick="assistantFetchTimeSeries()">Assistant: Fetch Time Series</button>
+        <button class="gray" onclick="assistantSummarize()">Assistant: Summarize Trends</button>
+        <button class="gray" onclick="assistantForecast()">Assistant: Forecast</button>
+        <button class="gray" onclick="explainChange()">Assistant: Explain Change</button>
+        <button class="gray" onclick="runAgentDemo()">12. Agent Demo</button>
+
+        <button onclick="updateAsset()">13. Temporal Update Asset</button>
+        <button onclick="loadAssetHistory()">14. Asset History</button>
+        <button onclick="updateMarketData()">15. Temporal Update Latest Market Row</button>
+        <button onclick="loadMarketHistory()">16. Market Row History</button>
+
+        <button class="red" onclick="clearOutput()">Clear Output</button>
+        <button class="gray" onclick="askAssistant()">Assistant: Ask Chat</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="cards">
+        <div class="card">
+          <h3>Total Assets</h3>
+          <p id="assetsCount">0</p>
+        </div>
+        <div class="card">
+          <h3>Total Providers</h3>
+          <p id="providersCount">0</p>
+        </div>
+        <div class="card">
+          <h3>Market Records</h3>
+          <p id="recordsCount">0</p>
+        </div>
+        <div class="card">
+          <h3>Current Provider</h3>
+          <p id="providerBadge">ALPHA</p>
+        </div>
+      </section>
+
+      <div id="status" class="status">Ready. Apasă butoanele din stânga în ordinea demo-ului.</div>
+
+      <section class="grid-two">
+        <div class="panel">
+          <h2>JSON Result</h2>
+          <pre id="jsonOutput">No result yet.</pre>
+        </div>
+
+        <div class="panel">
+          <h2>Market Chart</h2>
+          <canvas id="marketChart"></canvas>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 id="tableTitle">Table Output</h2>
+        <div id="tableContainer" class="table-wrap">
+          <table>
+            <thead>
+            <tr><th>Status</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>No table loaded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Demo Notes</h2>
+        <div class="notes">
+          <p>
+            Pentru demo recomandat: Ingest Alpha Vantage → Q1 Assets → Q3 Providers →
+            Q5 Time Series → Analytics Summary → Forecast → Assistant Tools →
+            Explain Change → Temporal Update → Asset History.
+          </p>
+          <p>
+            Dacă Stooq dă eroare, este normal în mediul actual: cere API key/captcha.
+            Demo-ul funcțional folosește Alpha Vantage.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+  let chart = null;
+  let lastMarketData = [];
+  let lastTimeSeriesId = null;
+
+  function symbol() {
+      return document.getElementById("symbolInput").value.trim();
+  }
+
+  function assetId() {
+      return document.getElementById("assetIdInput").value.trim();
+  }
+
+  function providerId() {
+      return document.getElementById("providerIdInput").value.trim();
+  }
+
+  function startDate() {
+      return document.getElementById("startDateInput").value.trim();
+  }
+
+  function endDate() {
+      return document.getElementById("endDateInput").value.trim();
+  }
+
+  function asOf() {
+      return document.getElementById("asOfInput").value.trim();
+  }
+
+  function setStatus(message, type = "") {
+      const el = document.getElementById("status");
+      el.className = "status " + type;
+      el.textContent = message;
+  }
+
+  function setJson(data) {
+      document.getElementById("jsonOutput").textContent = JSON.stringify(data, null, 2);
+  }
+
+  function clearOutput() {
+      setStatus("Ready.");
+      setJson("No result yet.");
+      document.getElementById("tableTitle").textContent = "Table Output";
+      document.getElementById("tableContainer").innerHTML = `
+          <table>
+              <thead><tr><th>Status</th></tr></thead>
+              <tbody><tr><td>No table loaded yet.</td></tr></tbody>
+          </table>
+      `;
+      clearChart();
+  }
+
+  async function api(url, options = {}) {
+      try {
+          setStatus("Loading: " + url);
+
+          const response = await fetch(url, options);
+          const text = await response.text();
+
+          let data;
+          try {
+              data = text ? JSON.parse(text) : {};
+          } catch {
+              data = text;
+          }
+
+          if (!response.ok) {
+              throw new Error("HTTP " + response.status + "\n" + text);
+          }
+
+          setStatus("Success: " + url, "ok");
+          return data;
+      } catch (error) {
+          setStatus(error.message, "error");
+          setJson({
+              error: error.message,
+              note: "Verifică Spring Boot console pentru stack trace dacă statusul este 500."
+          });
+          throw error;
+      }
+  }
+
+  function createTable(data, title) {
+      document.getElementById("tableTitle").textContent = title;
+
+      const container = document.getElementById("tableContainer");
+
+      if (!Array.isArray(data)) {
+          data = [data];
+      }
+
+      if (!data || data.length === 0) {
+          container.innerHTML = `
+              <table>
+                  <thead><tr><th>Result</th></tr></thead>
+                  <tbody><tr><td>No data found.</td></tr></tbody>
+              </table>
+          `;
+          return;
+      }
+
+      const keys = Object.keys(data[0]);
+
+      let html = "<table><thead><tr>";
+      for (const key of keys) {
+          html += `<th>${escapeHtml(key)}</th>`;
+      }
+      html += "</tr></thead><tbody>";
+
+      for (const row of data) {
+          html += "<tr>";
+          for (const key of keys) {
+              let value = row[key];
+
+              if (value === null || value === undefined) {
+                  value = "";
+              } else if (typeof value === "object") {
+                  value = JSON.stringify(value);
+              }
+
+              html += `<td>${escapeHtml(String(value))}</td>`;
+          }
+          html += "</tr>";
+      }
+
+      html += "</tbody></table>";
+      container.innerHTML = html;
+  }
+
+  function escapeHtml(value) {
+      return value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+  }
+
+  async function askAssistant() {
+    const message = prompt("Ask the assistant something:", "forecast IBM");
+
+    if (!message) {
+        return;
+    }
+
+    const data = await api("/api/assistant/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: message,
+            assetId: assetId(),
+            providerId: providerId()
+        })
+    });
+
+    setJson(data);
+    createTable([{
+        userMessage: data.userMessage,
+        intent: data.intent,
+        answer: data.answer,
+        grounding: data.grounding
+    }], "LLM-style Assistant Chat");
+}
+
+  function clearChart() {
+      if (chart) {
+          chart.destroy();
+          chart = null;
+      }
+  }
+
+  function drawChart(data) {
+      clearChart();
+
+      if (!data || data.length === 0) {
+          return;
+      }
+
+      const sorted = [...data].sort((a, b) => String(a.dataDate).localeCompare(String(b.dataDate)));
+      const labels = sorted.map(item => item.dataDate);
+      const closes = sorted.map(item => item.closePrice);
+
+      const ctx = document.getElementById("marketChart");
+
+      chart = new Chart(ctx, {
+          type: "line",
+          data: {
+              labels: labels,
+              datasets: [{
+                  label: "Close Price",
+                  data: closes,
+                  borderWidth: 3,
+                  tension: 0.25
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      labels: {
+                          color: "#e5e7eb"
+                      }
+                  }
+              },
+              scales: {
+                  x: {
+                      ticks: {
+                          color: "#cbd5e1",
+                          maxTicksLimit: 8
+                      },
+                      grid: {
+                          color: "#1e293b"
+                      }
+                  },
+                  y: {
+                      ticks: {
+                          color: "#cbd5e1"
+                      },
+                      grid: {
+                          color: "#1e293b"
+                      }
+                  }
+              }
+          }
+      });
+  }
+
+  function marketTableRows(data) {
+      return data.map(item => ({
+          dataDate: item.dataDate,
+          openPrice: item.openPrice,
+          highPrice: item.highPrice,
+          lowPrice: item.lowPrice,
+          closePrice: item.closePrice,
+          volume: item.volume,
+          assetId: item.assetId,
+          providerId: item.providerId,
+          rawProviderSymbol: item.rawProviderSymbol,
+          ingestionTime: item.ingestionTime
+      }));
+  }
+
+  function historyRows(data) {
+      return data.map(item => ({
+          assetId: item.assetId,
+          ticker: item.ticker,
+          assetName: item.assetName,
+          category: item.category,
+          current: item.current,
+          deleted: item.deleted,
+          validFrom: item.validFrom,
+          validUntil: item.validUntil
+      }));
+  }
+
+  async function refreshCounts() {
+      try {
+          const assets = await fetch("/api/assets").then(r => r.json());
+          const providers = await fetch("/api/providers").then(r => r.json());
+
+          document.getElementById("assetsCount").textContent = Array.isArray(assets) ? assets.length : 0;
+          document.getElementById("providersCount").textContent = Array.isArray(providers) ? providers.length : 0;
+      } catch {
+          document.getElementById("assetsCount").textContent = "0";
+          document.getElementById("providersCount").textContent = "0";
+      }
+  }
+
+  async function ingestAlpha() {
+      const data = await api(`/api/ingest/alpha-vantage?symbol=${encodeURIComponent(symbol())}&assetId=${encodeURIComponent(assetId())}`, {
+          method: "POST"
+      });
+
+      setJson(data);
+      createTable([data], "UC1 Ingest Result - Alpha Vantage");
+      await refreshCounts();
+  }
+
+  async function ingestStooq() {
+      const stooqSymbol = symbol().toLowerCase().includes(".us")
+          ? symbol().toLowerCase()
+          : symbol().toLowerCase() + ".us";
+
+      const data = await api(`/api/ingest/stooq?symbol=${encodeURIComponent(stooqSymbol)}&assetId=${encodeURIComponent(assetId())}`, {
+          method: "POST"
+      });
+
+      setJson(data);
+      createTable([data], "UC1 Ingest Result - Stooq");
+      await refreshCounts();
+  }
+
+  async function loadAssets() {
+      const data = await api("/api/assets");
+      document.getElementById("assetsCount").textContent = data.length;
+      setJson(data);
+      createTable(data, "Q1 - Limited Info About Available Assets");
+  }
+
+  async function loadAssetDetails() {
+      const data = await api(`/api/assets/${encodeURIComponent(assetId())}`);
+      setJson(data);
+      createTable([data], "Q2 - Full Asset Details");
+  }
+
+  async function loadProviders() {
+      const data = await api("/api/providers");
+      document.getElementById("providersCount").textContent = data.length;
+      setJson(data);
+      createTable(data, "Q3 - Limited Info About Data Sources");
+  }
+
+  async function loadProviderDetails() {
+      const data = await api(`/api/providers/${encodeURIComponent(providerId())}`);
+      setJson(data);
+      createTable([data], "Q4 - Full Provider Details");
+  }
+
+  async function loadTimeSeries() {
+      document.getElementById("providerBadge").textContent = providerId();
+
+      const url = `/api/market-data/search?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}&startDate=${encodeURIComponent(startDate())}&endDate=${encodeURIComponent(endDate())}`;
+      const data = await api(url);
+
+      lastMarketData = data;
+      if (data.length > 0) {
+          lastTimeSeriesId = data[data.length - 1].timeSeriesId;
+      }
+
+      document.getElementById("recordsCount").textContent = data.length;
+
+      setJson({
+          recordsReturned: data.length,
+          firstRecord: data[0],
+          provenanceFields: [
+              "providerId",
+              "sourceEndpoint",
+              "rawProviderSymbol",
+              "rawDataHash",
+              "ingestionTime"
+          ]
+      });
+
+      createTable(marketTableRows(data), "Q5 - Time Series Data With Provenance");
+      drawChart(data);
+  }
+
+  async function loadTimeSeriesAsOf() {
+      const url = `/api/market-data/search?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}&startDate=${encodeURIComponent(startDate())}&endDate=${encodeURIComponent(endDate())}&asOf=${encodeURIComponent(asOf())}`;
+      const data = await api(url);
+
+      setJson({
+          asOf: asOf(),
+          recordsReturned: data.length,
+          firstRecord: data[0]
+      });
+
+      createTable(marketTableRows(data), "Q5 - Historical Time Series As Of");
+      drawChart(data);
+  }
+
+  async function loadSummary() {
+      const data = await api(`/api/analytics/summary?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+
+      const row = {
+          assetId: data.assetId,
+          providerId: data.providerId,
+          recordsCount: data.recordsCount,
+          firstDate: data.firstDate,
+          lastDate: data.lastDate,
+          firstClose: data.firstClose,
+          lastClose: data.lastClose,
+          minClose: data.minClose,
+          maxClose: data.maxClose,
+          avgClose: data.avgClose,
+          trend: data.trend,
+          percentageChange: data.percentageChange
+      };
+
+      setJson(data);
+      createTable([row], "UC3 - Analytics Summary");
+  }
+
+  async function loadForecast() {
+      const data = await api(`/api/analytics/forecast/next-day?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+      setJson(data);
+      createTable([data], "UC3 - Simple Next Day Forecast");
+  }
+
+  async function loadExport() {
+      const data = await api(`/api/analytics/export?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+
+      setJson({
+          assetId: data.assetId,
+          providerId: data.providerId,
+          format: data.format,
+          intendedConsumers: data.intendedConsumers,
+          recordsCount: data.records ? data.records.length : 0,
+          sampleRecord: data.records ? data.records[0] : null
+      });
+
+      createTable([{
+          assetId: data.assetId,
+          providerId: data.providerId,
+          format: data.format,
+          intendedConsumers: Array.isArray(data.intendedConsumers) ? data.intendedConsumers.join(", ") : data.intendedConsumers,
+          recordsCount: data.records ? data.records.length : 0
+      }], "UC3 - Export for Spark / ML / BI");
+  }
+
+  async function loadAssistantTools() {
+      const data = await api("/api/assistant/tools");
+      setJson(data);
+      createTable(data, "UC4 - Assistant Available Tools");
+  }
+
+  async function assistantListAssets() {
+      const data = await api("/api/assistant/tools/list-assets");
+      setJson(data);
+      createTable(data, "Assistant Tool - List Assets");
+  }
+
+  async function assistantFetchTimeSeries() {
+      const data = await api(`/api/assistant/tools/fetch-time-series?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+      setJson({
+          recordsReturned: data.length,
+          sampleRecord: data[0]
+      });
+      createTable(marketTableRows(data.slice(0, 30)), "Assistant Tool - Fetch Time Series");
+      drawChart(data);
+  }
+
+  async function assistantSummarize() {
+      const data = await api(`/api/assistant/tools/summarize-trends?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+      setJson(data);
+      createTable([data], "Assistant Tool - Summarize Trends");
+  }
+
+  async function assistantForecast() {
+      const data = await api(`/api/assistant/tools/forecast-next-day?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+      setJson(data);
+      createTable([data], "Assistant Tool - Forecast Next Day");
+  }
+
+  async function explainChange() {
+      const data = await api(`/api/assistant/tools/explain-change?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+      setJson(data);
+      createTable([data], "Assistant Tool - Explain Latest Change");
+  }
+
+  async function runAgentDemo() {
+      const data = await api(`/api/assistant/agent-demo?symbol=${encodeURIComponent(symbol())}&assetId=${encodeURIComponent(assetId())}`, {
+          method: "POST"
+      });
+
+      setJson(data);
+
+      createTable([{
+          agentStyle: data.agentStyle,
+          step1: "ingest",
+          step2: "list assets",
+          step3: "list providers",
+          summaryTrend: data.step4_summary ? data.step4_summary.trend : "",
+          forecast: data.step5_forecast ? data.step5_forecast.predictedNextDayClose : "",
+          explanation: data.step6_explanation ? data.step6_explanation.direction : ""
+      }], "Bonus - Agentic Workflow Demo");
+
+      await refreshCounts();
+  }
+
+  async function updateAsset() {
+      const body = {
+          assetName: "International Business Machines",
+          category: "STOCK"
+      };
+
+      const data = await api(`/api/assets/${encodeURIComponent(assetId())}`, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+      });
+
+      setJson(data);
+      createTable([data], "Temporal Warehouse - Asset Updated As New Version");
+      await refreshCounts();
+  }
+
+  async function loadAssetHistory() {
+      const data = await api(`/api/assets/${encodeURIComponent(assetId())}/history`);
+      setJson(data);
+      createTable(historyRows(data), "Temporal Warehouse - Asset History");
+  }
+
+  async function updateMarketData() {
+      if (!lastTimeSeriesId) {
+          const data = await api(`/api/market-data/search?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+          if (!data || data.length === 0) {
+              setStatus("No market data available. Run ingest first.", "error");
+              return;
+          }
+          lastMarketData = data;
+          lastTimeSeriesId = data[data.length - 1].timeSeriesId;
+      }
+
+      const latest = lastMarketData[lastMarketData.length - 1];
+
+      const updated = {
+          closePrice: latest && latest.closePrice ? latest.closePrice + 1 : 999
+      };
+
+      const data = await api(`/api/market-data/${encodeURIComponent(lastTimeSeriesId)}`, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(updated)
+      });
+
+      setJson(data);
+      createTable([{
+          timeSeriesId: data.timeSeriesId,
+          dataDate: data.dataDate,
+          closePrice: data.closePrice,
+          current: data.current,
+          deleted: data.deleted,
+          validFrom: data.validFrom,
+          validUntil: data.validUntil
+      }], "Temporal Warehouse - Market Data Updated As New Version");
+  }
+
+  async function loadMarketHistory() {
+      if (!lastTimeSeriesId) {
+          const data = await api(`/api/market-data/search?assetId=${encodeURIComponent(assetId())}&providerId=${encodeURIComponent(providerId())}`);
+          if (!data || data.length === 0) {
+              setStatus("No market data available. Run ingest first.", "error");
+              return;
+          }
+          lastTimeSeriesId = data[data.length - 1].timeSeriesId;
+      }
+
+      const data = await api(`/api/market-data/${encodeURIComponent(lastTimeSeriesId)}/history`);
+
+      const rows = data.map(item => ({
+          timeSeriesId: item.timeSeriesId,
+          dataDate: item.dataDate,
+          closePrice: item.closePrice,
+          current: item.current,
+          deleted: item.deleted,
+          validFrom: item.validFrom,
+          validUntil: item.validUntil
+      }));
+
+      setJson(data);
+      createTable(rows, "Temporal Warehouse - Market Data History");
+  }
+
+  refreshCounts();
+</script>
+</body>
+</html>
