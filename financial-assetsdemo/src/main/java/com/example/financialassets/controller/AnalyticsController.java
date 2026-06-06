@@ -21,9 +21,7 @@ public class AnalyticsController {
         this.marketDataRepository = marketDataRepository;
     }
 
-    // Example:
-    // GET /api/analytics/summary?assetId=AAPL&providerId=STOOQ
-    // GET /api/analytics/summary?assetId=AAPL&providerId=STOOQ&startDate=2024-01-01&endDate=2024-12-31
+
     @GetMapping("/summary")
     public Map<String, Object> getSummary(
             @RequestParam String assetId,
@@ -96,11 +94,7 @@ public class AnalyticsController {
         return result;
     }
 
-    // Simple forecast:
-    // Uses the average of the last 3 close prices as the next-day predicted close.
-    //
-    // Example:
-    // GET /api/analytics/forecast/next-day?assetId=AAPL&providerId=STOOQ
+
     @GetMapping("/forecast/next-day")
     public Map<String, Object> forecastNextDay(
             @RequestParam String assetId,
@@ -139,10 +133,7 @@ public class AnalyticsController {
         return result;
     }
 
-    // Compare two assets using the same provider.
-    //
-    // Example:
-    // GET /api/analytics/compare?assetId1=AAPL&assetId2=MSFT&providerId=STOOQ
+
     @GetMapping("/compare")
     public Map<String, Object> compareAssets(
             @RequestParam String assetId1,
@@ -173,11 +164,7 @@ public class AnalyticsController {
         return result;
     }
 
-    // ML/Spark-friendly export.
-    // The idea is that Spark or another analytics tool can consume this JSON.
-    //
-    // Example:
-    // GET /api/analytics/export?assetId=AAPL&providerId=STOOQ
+
     @GetMapping("/export")
     public Map<String, Object> exportForAnalytics(
             @RequestParam String assetId,

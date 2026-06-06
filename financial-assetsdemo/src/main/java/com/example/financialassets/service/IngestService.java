@@ -27,6 +27,8 @@ public class IngestService {
     @Value("${alpha.vantage.api.key}")
     private String alphaVantageApiKey;
 
+    @Value("${stooq.api.key:}")
+    private String stooqApiKey;
 
     private static final String STOOQ_PROVIDER_ID = "STOOQ";
     private static final String STOOQ_BASE_URL = "https://stooq.com";
@@ -34,7 +36,6 @@ public class IngestService {
     private static final String ALPHA_PROVIDER_ID = "ALPHA_VANTAGE";
     private static final String ALPHA_BASE_URL = "https://www.alphavantage.co";
 
-    private static final String STOOQ_API_KEY = "PASTE_API_KEY_HERE";
     private final RestTemplate restTemplate;
     private final AssetRepository assetRepository;
     private final DataProviderRepository dataProviderRepository;
@@ -62,8 +63,11 @@ public class IngestService {
 
         String endpoint = STOOQ_BASE_URL
                 + "/q/d/l/?s=" + normalizedSymbol
-                + "&i=d"
-                + "&apikey=" + STOOQ_API_KEY;
+                + "&i=d";
+
+        if (stooqApiKey != null && !stooqApiKey.isBlank()) {
+            endpoint = endpoint + "&apikey=" + stooqApiKey;
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "Mozilla/5.0");
@@ -81,14 +85,14 @@ public class IngestService {
         String csv = response.getBody();
 
         if (csv != null && csv.contains("Get your apikey")) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("providerId", STOOQ_PROVIDER_ID);
-            result.put("assetId", normalizedAssetId);
-            result.put("symbol", normalizedSymbol);
-            result.put("status", "API_KEY_REQUIRED");
-            result.put("message", "Stooq requires an API key/captcha. The platform handled this provider limitation without crashing.");
-            result.put("endpoint", endpoint);
-            return result;
+            return providerUnavailableResult(
+                    STOOQ_PROVIDER_ID,
+                    normalizedAssetId,
+                    normalizedSymbol,
+                    endpoint,
+                    "API_KEY_REQUIRED",
+                    "Stooq requires an API key/captcha. Use /api/demo/seed for the reproducible demo or configure a valid provider key."
+            );
         }
 
         if (csv == null || csv.isBlank()) {
@@ -99,7 +103,25 @@ public class IngestService {
 
         if (!firstLine.equalsIgnoreCase("Date,Open,High,Low,Close,Volume")) {
             String preview = csv.substring(0, Math.min(csv.length(), 500));
-            throw new RuntimeException("Invalid Stooq CSV for symbol=" + normalizedSymbol + ". Preview=" + preview);
+            if (preview.contains("<!DOCTYPE html") || preview.toLowerCase().contains("requires javascript")) {
+                return providerUnavailableResult(
+                        STOOQ_PROVIDER_ID,
+                        normalizedAssetId,
+                        normalizedSymbol,
+                        endpoint,
+                        "BROWSER_VERIFICATION_REQUIRED",
+                        "Stooq returned a browser verification page instead of CSV data. Use /api/demo/seed for the reproducible demo."
+                );
+            }
+
+            return providerUnavailableResult(
+                    STOOQ_PROVIDER_ID,
+                    normalizedAssetId,
+                    normalizedSymbol,
+                    endpoint,
+                    "INVALID_PROVIDER_RESPONSE",
+                    "Stooq returned data that was not the expected CSV format. Preview=" + preview
+            );
         }
 
         ensureStooqProviderExists();
@@ -145,10 +167,17 @@ public class IngestService {
 
         if (csv == null || csv.isBlank() || !csv.contains("timestamp")) {
             String preview = csv == null ? "null" : csv.substring(0, Math.min(csv.length(), 300));
-            throw new RuntimeException(
-                    "No CSV data returned from Alpha Vantage for symbol=" + symbol +
-                            ". HTTP status=" + response.getStatusCode() +
-                            ". Response preview=" + preview
+            String status = preview.contains("\"Information\"") && preview.contains("demo")
+                    ? "API_KEY_REQUIRED"
+                    : "INVALID_PROVIDER_RESPONSE";
+
+            return providerUnavailableResult(
+                    ALPHA_PROVIDER_ID,
+                    normalizedAssetId,
+                    normalizedSymbol,
+                    endpoint,
+                    status,
+                    "Alpha Vantage did not return CSV data for this symbol. Configure ALPHA_VANTAGE_API_KEY/STOOQ_API_KEY or use /api/demo/seed for the reproducible demo. Response preview=" + preview
             );
         }
 
@@ -430,5 +459,27 @@ public class IngestService {
         } catch (Exception exception) {
             throw new RuntimeException("Could not calculate SHA-256 hash", exception);
         }
+    }
+
+    private Map<String, Object> providerUnavailableResult(
+            String providerId,
+            String assetId,
+            String symbol,
+            String endpoint,
+            String status,
+            String message
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("providerId", providerId);
+        result.put("assetId", assetId);
+        result.put("symbol", symbol);
+        result.put("endpoint", endpoint);
+        result.put("status", status);
+        result.put("message", message);
+        result.put("insertedRecords", 0);
+        result.put("versionedRecords", 0);
+        result.put("skippedRecords", 0);
+        result.put("fallback", "POST /api/demo/seed");
+        return result;
     }
 }

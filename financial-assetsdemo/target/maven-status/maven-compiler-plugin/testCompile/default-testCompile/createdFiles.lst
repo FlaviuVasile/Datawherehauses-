@@ -1,1 +1,5 @@
 com\example\financialassets\controller\AssetControllerTest.class
+com\example\financialassets\service\IngestServiceTest.class
+com\example\financialassets\model\TemporalModelTest.class
+com\example\financialassets\repository\MarketDataRepositoryTest.class
+com\example\financialassets\controller\AnalyticsControllerTest.class

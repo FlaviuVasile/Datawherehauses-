@@ -64,4 +64,36 @@ class IngestServiceTest {
         verify(providerRepository, times(1)).save(any());
         verify(assetRepository, times(1)).save(any());
     }
+
+    @Test
+    void ingestFromAlphaVantageReturnsControlledResultWhenDemoKeyDoesNotProvideCsv() {
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        AssetRepository assetRepository = mock(AssetRepository.class);
+        DataProviderRepository providerRepository = mock(DataProviderRepository.class);
+        MarketDataRepository marketDataRepository = mock(MarketDataRepository.class);
+
+        IngestService service = new IngestService(
+                restTemplate,
+                assetRepository,
+                providerRepository,
+                marketDataRepository
+        );
+
+        String providerMessage = """
+                {
+                    "Information": "The **demo** API key is for demo purposes only."
+                }
+                """;
+
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(new ResponseEntity<>(providerMessage, HttpStatus.OK));
+
+        Map<String, Object> result = service.ingestFromAlphaVantage("AAPL", "AAPL");
+
+        assertEquals("ALPHA_VANTAGE", result.get("providerId"));
+        assertEquals("AAPL", result.get("assetId"));
+        assertEquals("API_KEY_REQUIRED", result.get("status"));
+        assertEquals(0, result.get("insertedRecords"));
+        verifyNoInteractions(providerRepository, assetRepository, marketDataRepository);
+    }
 }

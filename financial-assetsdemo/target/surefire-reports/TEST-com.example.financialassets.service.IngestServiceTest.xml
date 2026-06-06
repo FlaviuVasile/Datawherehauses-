@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.example.financialassets.controller.AssetControllerTest" time="0.212" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.example.financialassets.service.IngestServiceTest" time="0.487" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -30,6 +30,8 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="FILE_LOG_CHARSET" value="UTF-8"/>
+    <property name="java.awt.headless" value="true"/>
     <property name="surefire.real.class.path" value="C:\Users\flavi\AppData\Local\Temp\surefire4232125035261862387\surefirebooter-20260606213620262_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -49,7 +51,9 @@
     <property name="user.dir" value="C:\Users\flavi\IdeaProjects\financial-assetsdemo"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="PID" value="34088"/>
     <property name="sun.os.patch.level" value=""/>
+    <property name="CONSOLE_LOG_CHARSET" value="UTF-8"/>
     <property name="native.encoding" value="Cp1250"/>
     <property name="java.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\flavi\.codex\tmp\arg0\codex-arg0HlBZvE;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\MinGW\bin;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\ruffle\bin\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\ProgramData\ComposerSetup\bin;C:\xampp\php;C:\nodejs\;C:\Program Files\Microsoft\Azure Functions Core Tools\;C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\MinGW\bin;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\ruffle\bin\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\ProgramData\ComposerSetup\bin;C:\xampp\php;C:\nodejs\;C:\Users\flavi\Downloads\maven-mvnd-1.0.2-windows-amd64\maven-mvnd-1.0.2-windows-amd64\mvn\bin;C:\MinGW\bin;C:\Users\flavi\.dotnet\tools;C:\Users\flavi\Downloads\php-8.4.2-nts-Win32-vs17-x64;C:\Users\flavi\AppData\Local\GitHubDesktop\bin;C:\Users\flavi\Downloads\maven-mvnd-1.0.2-windows-amd64;C:\Users\flavi\AppData\Local;C:\Users\flavi\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\flavi\AppData\Local\Programs\Ollama;c:\Users\flavi\.vscode\extensions\openai.chatgpt-26.602.40724-win32-x64\bin\windows-x86_64;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
@@ -58,8 +62,8 @@
     <property name="java.vm.version" value="21.0.8+9-LTS"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
+    <property name="LOGGED_APPLICATION_NAME" value="[financial-assets] "/>
   </properties>
-  <testcase name="getAllCurrentAssetsReturnsLimitedResponse" classname="com.example.financialassets.controller.AssetControllerTest" time="0.152"/>
-  <testcase name="getAssetByAssetIdReturnsCurrentAsset" classname="com.example.financialassets.controller.AssetControllerTest" time="0.027"/>
-  <testcase name="createAssetSetsTemporalFields" classname="com.example.financialassets.controller.AssetControllerTest" time="0.026"/>
+  <testcase name="ingestFromAlphaVantageSavesNewMarketDataRows" classname="com.example.financialassets.service.IngestServiceTest" time="0.473"/>
+  <testcase name="ingestFromAlphaVantageReturnsControlledResultWhenDemoKeyDoesNotProvideCsv" classname="com.example.financialassets.service.IngestServiceTest" time="0.006"/>
 </testsuite>

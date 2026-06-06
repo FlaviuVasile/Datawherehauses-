@@ -349,8 +349,8 @@
   <header class="hero">
     <h1>Financial Assets Platform</h1>
     <p>
-      Demo pentru ingestie date financiare, MongoDB temporal warehouse, REST API,
-      analytics, forecast, assistant tools și agent workflow.
+      Demo for financial data ingestion, MongoDB temporal warehouse, REST API,
+      analytics, forecast, assistant tools, and agent workflow.
     </p>
     <div class="badge-row">
       <span class="badge">Spring Boot</span>
@@ -397,6 +397,7 @@
       </div>
 
       <div class="button-grid">
+        <button class="green" onclick="seedDemoData()">0. Seed Local Demo Data</button>
         <button class="green" onclick="ingestAlpha()">1. Ingest Alpha Vantage</button>
         <button class="orange" onclick="ingestStooq()">Try Stooq Ingest</button>
 
@@ -449,7 +450,7 @@
         </div>
       </section>
 
-      <div id="status" class="status">Ready. Apasă butoanele din stânga în ordinea demo-ului.</div>
+      <div id="status" class="status">Ready. Use the buttons on the left in demo order.</div>
 
       <section class="grid-two">
         <div class="panel">
@@ -481,13 +482,14 @@
         <h2>Demo Notes</h2>
         <div class="notes">
           <p>
-            Pentru demo recomandat: Ingest Alpha Vantage → Q1 Assets → Q3 Providers →
-            Q5 Time Series → Analytics Summary → Forecast → Assistant Tools →
-            Explain Change → Temporal Update → Asset History.
+            Recommended demo: Seed Local Demo Data -> Q1 Assets -> Q3 Providers ->
+            Q5 Time Series -> Analytics Summary -> Forecast -> Assistant Tools ->
+            Explain Change -> Temporal Update -> Asset History.
           </p>
           <p>
-            Dacă Stooq dă eroare, este normal în mediul actual: cere API key/captcha.
-            Demo-ul funcțional folosește Alpha Vantage.
+            If Stooq fails, that is expected in some environments because it may require
+            an API key or captcha. The local seed is deterministic and works without
+            external provider access.
           </p>
         </div>
       </section>
@@ -773,6 +775,22 @@
 
       setJson(data);
       createTable([data], "UC1 Ingest Result - Alpha Vantage");
+      await refreshCounts();
+  }
+
+  async function seedDemoData() {
+      document.getElementById("providerIdInput").value = "DEMO_VENDOR";
+      document.getElementById("assetIdInput").value = "AAPL";
+      document.getElementById("symbolInput").value = "AAPL";
+      document.getElementById("startDateInput").value = "2026-01-05";
+      document.getElementById("endDateInput").value = "2026-01-09";
+
+      const data = await api("/api/demo/seed", {
+          method: "POST"
+      });
+
+      setJson(data);
+      createTable([data], "Local Demo Seed Result");
       await refreshCounts();
   }
 
